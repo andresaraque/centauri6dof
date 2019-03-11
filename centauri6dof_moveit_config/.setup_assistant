@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: centauri6dof
+    relative_path: urdf/centauri6dof.urdf
+    xacro_args: "--inorder "
+  SRDF:
+    relative_path: config/centauri6dof.srdf
+  CONFIG:
+    author_name: AndresAraque
+    author_email: andresaraque24dos@gmail.com
+    generated_timestamp: 1551395824

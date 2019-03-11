@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="uao">
+    <file>logo_uao.png</file>
+  </qresource>
+</RCC>

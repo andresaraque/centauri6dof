@@ -1,0 +1,767 @@
+<robot
+  name="centauri6dof">
+
+	  <material name="table6dof">
+			<color rgba="1 1 1 1"/>
+		</material>
+
+	  <material name="black6dof">
+			<color rgba="0.2 0,196078431 0,192156863 1"/>
+		</material>
+
+	  <material name="yellow6dof">
+			<color rgba="1 1 0 1"/>
+		</material>
+
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-3.87008276523659E-05 -0.0817645704237657 -0.030378156140952"
+        rpy="0 0 0" />
+      <mass
+        value="3.65383133115989" />
+      <inertia
+        ixx="0.0796437064139586"
+        ixy="-1.35807816685381E-07"
+        ixz="3.16441218494544E-06"
+        iyy="0.0796383423261766"
+        iyz="0.000125066867569525"
+        izz="0.153453766842238" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/base_link.STL" />
+      </geometry>
+			<material name="table6dof"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+<!--//////////////////////////////////////////////////////////-->
+  <link
+    name="link0">
+    <inertial>
+      <origin
+        xyz="0.0807291362657826 1.35637930692711E-07 0.0322703892739422"
+        rpy="0 0 0" />
+      <mass
+        value="1.5913265865128" />
+      <inertia
+        ixx="5.94829545708689E-05"
+        ixy="-1.38396838427451E-08"
+        ixz="0.000236581332428518"
+        iyy="0.00772725923039858"
+        iyz="5.49261711838682E-09"
+        izz="0.00774092887972647" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/link0.STL" />
+      </geometry>
+      <material name="yellow6dof"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/link0.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint0"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="link0" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+<!--//////////////////////////////////////////////////////////-->
+  <link
+    name="link1">
+    <inertial>
+      <origin
+        xyz="3.76244275456517E-05 0.07417823767633 -8.98233600953868E-05"
+        rpy="0 0 0" />
+      <mass
+        value="2.01538850239224" />
+      <inertia
+        ixx="0.00353227137515841"
+        ixy="9.696639397941E-06"
+        ixz="0.00297171917890993"
+        iyy="0.0074634181349595"
+        iyz="-1.00852639929973E-06"
+        izz="0.0080464620891467" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/link1.STL" />
+      </geometry>
+      <material name="black6dof"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint1"
+    type="revolute">
+    <origin
+      xyz="0 0 0.0660000000000001"
+      rpy="1.5707963267949 0 -0.452226747641724" />
+    <parent
+      link="link0" />
+    <child
+      link="link1" />
+    <axis
+      xyz="0 1 0" />
+     <limit
+      lower="-1.5707"
+      upper="1.5707"
+      effort="300"
+      velocity="1" />
+  </joint>
+<!--//////////////////////////////////////////////////////////-->
+  <link
+    name="link2">
+    <inertial>
+      <origin
+        xyz="0.00019803 0.082039 0.0010087"
+        rpy="0 0 0" />
+      <mass
+        value="1.9635" />
+      <inertia
+        ixx="0.012176"
+        ixy="-2.6636E-05"
+        ixz="-4.6349E-07"
+        iyy="0.00060347"
+        iyz="-0.00013766"
+        izz="0.011573" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/link2.STL" />
+      </geometry>
+      <material name="yellow6dof"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint2"
+    type="revolute">
+    <origin
+      xyz="0 0.1455 0"
+      rpy="0 -1.11019042810366 0" />
+    <parent
+      link="link1" />
+    <child
+      link="link2" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.5707"
+      upper="1.5707"
+      effort="5"
+      velocity="1" />
+  </joint>
+<!--//////////////////////////////////////////////////////////-->
+  <link
+    name="link3">
+    <inertial>
+      <origin
+        xyz="0.000626139076089688 0.0486487096653359 0.000675674262400602"
+        rpy="0 0 0" />
+      <mass
+        value="1.18050061400462" />
+      <inertia
+        ixx="0.000542025469135715"
+        ixy="-1.13899929472064E-05"
+        ixz="-2.51651442756918E-07"
+        iyy="0.000253426581911029"
+        iyz="-1.51961207048325E-05"
+        izz="0.000289498592185195" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/link3.STL" />
+      </geometry>
+      <material name="black6dof"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/link3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint3"
+    type="revolute">
+    <origin
+      xyz="0.000683655378621667 0.221122735963581 -0.0034958933328718"
+      rpy="-3.51525449374113E-16 3.46944695195361E-18 0" />
+    <parent
+      link="link2" />
+    <child
+      link="link3" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.5707"
+      upper="1.5707"
+      effort="5"
+      velocity="1" />
+  </joint>
+<!--//////////////////////////////////////////////////////////-->
+  <link
+    name="link4">
+    <inertial>
+      <origin
+        xyz="0.011293 -0.00022493 0.045445"
+        rpy="0 0 0" />
+      <mass
+        value="0.65268" />
+      <inertia
+        ixx="4.43E-05"
+        ixy="-1.9291E-06"
+        ixz="5.7823E-05"
+        iyy="0.00012329"
+        iyz="1.4718E-06"
+        izz="7.9091E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/link4.STL" />
+      </geometry>
+      <material name="black6dof"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/link4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint4"
+    type="revolute">
+    <origin
+      xyz="0.00043975 0.1275 0"
+      rpy="-1.5708 1.5624 -0.0034491" />
+    <parent
+      link="link3" />
+    <child
+      link="link4" />
+    <axis
+      xyz="0 0 1" />
+  <limit
+      lower="-1.5707"
+      upper="1.5707"
+      effort="5"
+      velocity="1" />
+  </joint>
+<!--//////////////////////////////////////////////////////////-->
+  <link
+    name="link5">
+    <inertial>
+      <origin
+        xyz="0.00013449 0.004274 -0.00031217"
+        rpy="0 0 0" />
+      <mass
+        value="0.16415" />
+      <inertia
+        ixx="3.7602E-05"
+        ixy="-5.5077E-07"
+        ixz="9.5822E-09"
+        iyy="2.0116E-05"
+        iyz="3.0426E-07"
+        izz="1.7521E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/link5.STL" />
+      </geometry>
+      <material name="yellow6dof"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/link5.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint5"
+    type="revolute">
+    <origin
+      xyz="-0.000999998579141709 0 0.0950000000001046"
+      rpy="1.5707963267949 -0.0171419017753631 -1.56911057527423" />
+    <parent
+      link="link4" />
+    <child
+      link="link5" />
+    <axis
+      xyz="0 0 -1" />
+  <limit
+      lower="-1.5707"
+      upper="1.5707"
+      effort="5"
+      velocity="1" />
+  </joint>
+<!--//////////////////////////////////////////////////////////-->
+  <link
+    name="link6">
+    <inertial>
+      <origin
+        xyz="-0.0028307 -0.014417 0.020832"
+        rpy="0 0 0" />
+      <mass
+        value="0.064418" />
+      <inertia
+        ixx="1.6924E-05"
+        ixy="-3.1692E-06"
+        ixz="6.6553E-07"
+        iyy="1.3455E-06"
+        iyz="2.861E-06"
+        izz="1.7067E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/link6.STL" />
+      </geometry>
+      <material name="black6dof"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/link6.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint6"
+    type="revolute">
+    <origin
+      xyz="0.0012895 0.04098 0"
+      rpy="1.6915E-08 1.5707 1.5393" />
+    <parent
+      link="link5" />
+    <child
+      link="link6" />
+    <axis
+      xyz="5.3025E-05 0 1" />
+  <limit
+      lower="-1.5707"
+      upper="1.5707"
+      effort="5"
+      velocity="1" />
+  </joint>
+<!--//////////////////////////////////////////////////////////-->
+  <link
+    name="gear1">
+    <inertial>
+      <origin
+        xyz="-0.0065946 -0.00039537 -0.003"
+        rpy="0 0 0" />
+      <mass
+        value="0.0048785" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/gear1.STL" />
+      </geometry>
+      <material name="yellow6dof"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/gear1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_gear1"
+    type="revolute">
+    <origin
+      xyz="-0.0141687811604771 -0.00205172513025526 0.0240007513303376"
+      rpy="1.57079248092531 0.383949555179722 -0.0673010584807898" />
+    <parent
+      link="link6" />
+    <child
+      link="gear1" />
+    <axis
+      xyz="0 0 1" />
+   <limit
+      lower="-0.95"
+      upper="0"
+      effort="5"
+      velocity="1" />
+   </joint>
+<!--//////////////////////////////////////////////////////////-->
+  <link
+    name="pinza1">
+    <inertial>
+      <origin
+        xyz="-0.00410677673607357 0.0288723262754511 -0.00325238297571179"
+        rpy="0 0 0" />
+      <mass
+        value="0.0104910711600225" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/pinza1.STL" />
+      </geometry>
+      <material name="yellow6dof"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/pinza1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_pinza1"
+    type="continuous">
+    <origin
+      xyz="-0.0399999999999999 0 0"
+      rpy="1.9909768278481E-13 -6.93889390390723E-18 1.08550321509249E-15" />
+    <parent
+      link="gear1" />
+    <child
+      link="pinza1" />
+    <axis
+      xyz="0 0 1" />
+		<limit
+      lower="-1.5"
+      upper="0"
+      effort="5"
+      velocity="1" />
+   <mimic joint="joint_gear1" multiplier="-1" offset="0"/> 
+   </joint>
+<!--//////////////////////////////////////////////////////////-->
+  <link
+    name="gear2">
+    <inertial>
+      <origin
+        xyz="-0.00645273828292098 0.000406646504403807 -0.00300000575998524"
+        rpy="0 0 0" />
+      <mass
+        value="0.00500318588067354" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/gear2.STL" />
+      </geometry>
+      <material name="yellow6dof"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/gear2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_gear2"
+    type="revolute">
+    <origin
+      xyz="0.0137678333896608 -0.00393469228070031 0.0239992699974896"
+      rpy="-1.57079245405947 0.400771502354884 3.07429454658117" />
+    <parent
+      link="link6" />
+    <child
+      link="gear2" />
+    <axis
+      xyz="0 0 1" />
+   <limit
+      lower="0"
+      upper="0.95"
+      effort="5"
+      velocity="1" />
+    <!--<mimic joint="joint_gear1" multiplier="-1" offset="0"/>-->
+  </joint>
+<!--//////////////////////////////////////////////////////////-->
+  <link
+    name="pinza2">
+    <inertial>
+      <origin
+        xyz="-0.00459491181291338 -0.028798660398803 -0.00325244127537946"
+        rpy="0 0 0" />
+      <mass
+        value="0.0104910911949307" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/pinza2.STL" />
+      </geometry>
+      <material name="yellow6dof"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/pinza2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_pinza2"
+    type="revolute">
+    <origin
+      xyz="-0.0399999999999999 0 0"
+      rpy="1.97708169280553E-13 0 1.18785190017512E-15" />
+    <parent
+      link="gear2" />
+    <child
+      link="pinza2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.5"
+      upper="0"
+      effort="5"
+      velocity="1" />
+    <mimic joint="joint_gear2" multiplier="-1" offset="0"/>
+  </joint>
+<!--//////////////////////////////////////////////////////////-->
+  <link
+    name="pivot1">
+    <inertial>
+      <origin
+        xyz="-0.019999999999913 3.73034936274053E-14 -0.00299999999909059"
+        rpy="0 0 0" />
+      <mass
+        value="0.00167027391699942" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/pivot1.STL" />
+      </geometry>
+      <material name="yellow6dof"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/pivot1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_pivot1"
+    type="revolute">
+    <origin
+      xyz="-0.00718356702735162 -0.0025224669175542 0.044000380969009"
+      rpy="1.57079248092551 0.383949555179722 -0.0673010584807898" />
+    <parent
+      link="link6" />
+    <child
+      link="pivot1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.5707"
+      upper="1.5707"
+      effort="5"
+      velocity="1" />
+    <mimic joint="joint_gear1" multiplier="1" offset="0"/> 
+  </joint>
+<!--//////////////////////////////////////////////////////////-->
+  <link
+    name="pivot2">
+    <inertial>
+      <origin
+        xyz="-0.0200000000003783 1.7963408538435E-13 -0.00299999999915881"
+        rpy="0 0 0" />
+      <mass
+        value="0.00167027391699937" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/pivot2.STL" />
+      </geometry>
+      <material name="yellow6dof"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://centauri6dof/meshes/pivot2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_pivot2"
+    type="revolute">
+    <origin
+      xyz="0.00678474024778378 -0.00346395049278106 0.0439996403025864"
+      rpy="-1.57079245405947 0.400771502354882 3.07429454658117" />
+    <parent
+      link="link6" />
+    <child
+      link="pivot2" />
+    <axis
+      xyz="0 0 1" />
+   <limit
+      lower="-1.5707"
+      upper="1.5707"
+      effort="5"
+      velocity="1" />
+    <mimic joint="joint_gear2" multiplier="1" offset="0"/>
+  </joint>
+</robot>
