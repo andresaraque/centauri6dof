@@ -104,13 +104,13 @@ void setup() {
   nh.subscribe(gripper_sub);
 
   //Asignación de valor de maxima velocidad para cada motor
-  joint1.setMaxSpeed(1500);
-  joint2_m1.setMaxSpeed(750);
-  joint2_m2.setMaxSpeed(750);
-  joint3.setMaxSpeed(2000);
-  joint4.setMaxSpeed(500);
-  joint5.setMaxSpeed(1000);
-  joint6.setMaxSpeed(250);
+  joint1.setMaxSpeed(3000);
+  joint2_m1.setMaxSpeed(1500);
+  joint2_m2.setMaxSpeed(1500);
+  joint3.setMaxSpeed(4000);
+  joint4.setMaxSpeed(1000);
+  joint5.setMaxSpeed(2000);
+  joint6.setMaxSpeed(500);
 
   //Agregar motores a la libreria MultiStepper
   steppers.addStepper(joint1);
