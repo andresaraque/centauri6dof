@@ -2,6 +2,7 @@ import os
 import rospy
 import rospkg
 import math
+import csv
 import numpy as np
 import moveit_commander.robot as MICRobot
 import moveit_commander.planning_scene_interface as MICPlanningSceneInterface
@@ -107,7 +108,7 @@ class MyPlugin(Plugin):
         self._widget.SavePoseButton.setIcon(QIcon.fromTheme('object-rotate-right'))
         self._widget.SavePoseButton.clicked[bool].connect(self.fcn_update_joints)
         """
-        self._widget.PlayButton.setIcon(QIcon.fromTheme('user-available'))
+        self._widget.PlayButton.setIcon(QIcon.fromTheme('media-record'))
         self._widget.PlayButton.clicked[bool].connect(self._Send_joints_teleoperation)
 
         self._widget.HomeButton.setIcon(QIcon.fromTheme('go-home'))
@@ -119,14 +120,20 @@ class MyPlugin(Plugin):
         self._widget.GripperButton.setIcon(QIcon.fromTheme('software-update-available'))
         self._widget.GripperButton.clicked[bool].connect(self._fcn_gripper)
 
-        self._widget.SavePoseButton.setIcon(QIcon.fromTheme('software-update-available'))
+        self._widget.SavePoseButton.setIcon(QIcon.fromTheme('document-save'))
         self._widget.SavePoseButton.clicked[bool].connect(self._save_pose)
 
-        self._widget.DeletePoseButton.setIcon(QIcon.fromTheme('software-update-available'))
+        self._widget.DeletePoseButton.setIcon(QIcon.fromTheme('edit-clear'))
         self._widget.DeletePoseButton.clicked[bool].connect(self._delete_pose)
 
-        self._widget.ExecutePathButton.setIcon(QIcon.fromTheme('software-update-available'))
+        self._widget.ExecutePathButton.setIcon(QIcon.fromTheme('media-playback-start'))
         self._widget.ExecutePathButton.clicked[bool].connect(self._execute_path)
+
+        self._widget.SaveTrajectoryButton.setIcon(QIcon.fromTheme('document-send'))
+        self._widget.SaveTrajectoryButton.clicked[bool].connect(self._write_csv)
+
+        self._widget.ImportTrajectoryButton.setIcon(QIcon.fromTheme('document-open'))
+        self._widget.ImportTrajectoryButton.clicked[bool].connect(self._read_csv)
 
         self.goal = ArmJointState()
 
@@ -141,6 +148,10 @@ class MyPlugin(Plugin):
         self.trajectory = []
         self.count_save_pose = 0
         self.joint_visualizer = []
+
+        #lista_arq = os.system(ls("/home/araque/trajectories_centauri6dof"))
+        #print(lista_arq)
+        #self._widget.ShowText.setText("Ava: "+lista_arq )
 
         for i in xrange(0,6):
             self.arr_sl[i].setEnabled(True)
@@ -158,6 +169,7 @@ class MyPlugin(Plugin):
 
         self.grip = 0
         self.count_save_pose = 0
+        self.activate = 0
 
     def fcn_path_1(self):
         self._widget.ShowText.setText("Path one")
@@ -190,7 +202,7 @@ class MyPlugin(Plugin):
             goal.position6 = i[5]
             goal.position7 = i[6]
             pub.publish(goal)
-            rospy.sleep(7)
+            rospy.sleep(4)
         
     def fcn_path_2(self):
         self._widget.ShowText.setText("Path two")
@@ -267,25 +279,40 @@ class MyPlugin(Plugin):
         self.GoalPosition = [self.goal.position1, self.goal.position2, self.goal.position3, self.goal.position4, self.goal.position5, self.goal.position6,self.goal.position7]
         self.count_save_pose = self.count_save_pose + 1
         if self.count_save_pose == 1:
+            self.trajectory = []
             for i in xrange(0,7):
                 self.savePose.append((self.GoalPosition[i]))
                 self.joint_visualizer.append((self.GoalPosition[i]))
+            self.activate == 0
+            print("entro al primero")
+
+        elif self.activate == 1:
+            self.trajectory = [[0,0,0],[0,0,0]]
+            self.trajectory = []
+            self.savePose = []
+            self.joint_visualizer = []
+            for i in xrange(0,7):
+                self.savePose.append((self.GoalPosition[i]))
+                self.joint_visualizer.append((self.GoalPosition[i]))
+            self.activate = 0
+            print("entro al segundo")
         else:
             self.savePose = []
             self.joint_visualizer = []
             for i in xrange(0,7):
                 self.savePose.append((self.GoalPosition[i]))
                 self.joint_visualizer.append((self.GoalPosition[i]))
+            print("entro al tercero")
         self.trajectory.append(self.savePose)
 
         self._widget.ShowText.setText(
             "Successfully saved position:"
-            "\nJoint1:   "+ str((self.joint_visualizer[0]*360)/32000)+" degrees"+
-            "\nJoint2:   "+ str((self.joint_visualizer[1]*360)/16400)+" degrees"+         
-            "\nJoint3:   "+ str((self.joint_visualizer[2]*360)/72000)+" degrees"+ 
-            "\nJoint4:   "+ str((self.joint_visualizer[3]*360)/3200)+" degrees"+ 
-            "\nJoint5:   "+ str((self.joint_visualizer[4]*360)/14400)+" degrees"+ 
-            "\nJoint6:   "+ str((self.joint_visualizer[5]*360)/3000)+" degrees"+ 
+            "\nJoint1:   "+ str(round((self.joint_visualizer[0]*360)/32000))+" degrees"+
+            "\nJoint2:   "+ str(round((self.joint_visualizer[1]*360)/16400))+" degrees"+         
+            "\nJoint3:   "+ str(round((self.joint_visualizer[2]*360)/72000))+" degrees"+ 
+            "\nJoint4:   "+ str(round((self.joint_visualizer[3]*360)/3200))+" degrees"+ 
+            "\nJoint5:   "+ str(round((self.joint_visualizer[4]*360)/14400))+" degrees"+ 
+            "\nJoint6:   "+ str(round((self.joint_visualizer[5]*360)/3000))+" degrees"+ 
             "\nGripper:  "+ str(self.joint_visualizer[6])+" degrees"
             )
 
@@ -301,25 +328,49 @@ class MyPlugin(Plugin):
     def _execute_path(self):
         group = self.group
         joint_goal = group.get_current_joint_values()
+
         for num_array_pose in self.trajectory:
             goal = ArmJointState()
-            goal.position1 = num_array_pose[0]
-            joint_goal[0] = (num_array_pose[0]*(2*np.pi))/32000
-            goal.position2 = num_array_pose[1]
-            joint_goal[1] = (num_array_pose[1]*(2*np.pi))/16400
-            goal.position3 = num_array_pose[2]
-            joint_goal[2] = (num_array_pose[2]*(2*np.pi))/72000
-            goal.position4 = num_array_pose[3]
-            joint_goal[3] = (num_array_pose[3]*(2*np.pi))/3200
-            goal.position5 = num_array_pose[4]
-            joint_goal[4] = (num_array_pose[4]*(2*np.pi))/14400
-            goal.position6 = num_array_pose[5]
-            joint_goal[5] = (num_array_pose[5]*(2*np.pi))/3000
-            goal.position7 = num_array_pose[6]
+            goal.position1 = np.int16(num_array_pose[0])
+            joint_goal[0] = (float(num_array_pose[0])*(2*np.pi))/32000
+            goal.position2 = np.int16(num_array_pose[1])
+            joint_goal[1] = (float(num_array_pose[1])*(2*np.pi))/16400
+            goal.position3 = np.int16(num_array_pose[2])
+            joint_goal[2] = (float(num_array_pose[2])*(2*np.pi))/72000
+            goal.position4 = np.int16(num_array_pose[3])
+            joint_goal[3] = (float(num_array_pose[3])*(2*np.pi))/3200
+            goal.position5 = np.int16(num_array_pose[4])
+            joint_goal[4] = (float(num_array_pose[4])*(2*np.pi))/14400
+            goal.position6 = np.int16(num_array_pose[5])
+            joint_goal[5] = (float(num_array_pose[5])*(2*np.pi))/3000
+            goal.position7 = np.int16(num_array_pose[6])
             self.pub2.publish(goal)
             group.go(joint_goal, wait=True)
             group.stop()
             rospy.sleep(5)
+
+    def _write_csv(self):
+        name = str(self._widget.NameFileTextEdit.toPlainText())
+        locationFile = open('./trajectories_centauri6dof/'+name+'.csv','w')
+        file = csv.writer(locationFile)
+        file.writerows(self.trajectory)
+        self._widget.ShowText.setText("Successfully saved file "+name+" (CSV)")
+        os.system('espeak "(Successfully saved file)"')
+
+    def _read_csv(self):
+        self.activate = 1
+        self.count_save_pose = 1
+        name = str(self._widget.NameFileTextEdit.toPlainText())
+        self.trajectory = []
+        locationFile = open('./trajectories_centauri6dof/'+name+'.csv','r')
+        file = csv.reader(locationFile, delimiter=',')
+        for num_array_pose in file:
+            for num_pose in xrange(0,7):
+                np.asarray(num_array_pose[num_pose])
+            self.trajectory.append(num_array_pose)
+        self._widget.ShowText.setText("Successfully import file "+name+" (CSV)")
+        os.system('espeak "(Successfully saved file)"')
+        print(self.trajectory)
 
     def shutdown_plugin(self):
         # TODO unregister all publishers here
