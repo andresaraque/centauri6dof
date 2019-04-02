@@ -1,5 +1,5 @@
 <library path="src">
-  <class name="My Plugin" type="rqt_mypkg.my_module.MyPlugin" base_class_type="rqt_gui_py::Plugin">
+  <class name="rqt_mypkg" type="rqt_mypkg.my_module.MyPlugin" base_class_type="rqt_gui_py::Plugin">
     <description>
       An example Python GUI plugin to create a great user interface.
     </description>

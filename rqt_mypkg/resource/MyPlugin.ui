@@ -458,9 +458,9 @@ pose</string>
    <widget class="QPushButton" name="PlayButton">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>140</x>
       <y>110</y>
-      <width>91</width>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
@@ -550,6 +550,25 @@ pose</string>
     </size>
    </property>
    </widget>
+   <widget class="QPushButton" name="PreviewButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>110</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Preview</string>
+    </property>
+   <property name="iconSize">
+    <size>
+     <width>16</width>
+     <height>16</height>
+    </size>
+   </property>
+   </widget>
   </widget>
   <widget class="QFrame" name="frame_3">
    <property name="geometry">
@@ -585,7 +604,7 @@ pose</string>
     </size>
    </property>
    </widget>
-   <widget class="QTextEdit" name="NameFileTextEdit">
+x   <widget class="QTextEdit" name="NameFileTextEdit">
     <property name="geometry">
      <rect>
       <x>10</x>

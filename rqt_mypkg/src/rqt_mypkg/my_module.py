@@ -104,10 +104,7 @@ class MyPlugin(Plugin):
 
         self._widget.Path2Button.setIcon(QIcon.fromTheme('media-playback-start'))
         self._widget.Path2Button.clicked[bool].connect(self.fcn_path_2)
-        """
-        self._widget.SavePoseButton.setIcon(QIcon.fromTheme('object-rotate-right'))
-        self._widget.SavePoseButton.clicked[bool].connect(self.fcn_update_joints)
-        """
+
         self._widget.PlayButton.setIcon(QIcon.fromTheme('media-record'))
         self._widget.PlayButton.clicked[bool].connect(self._Send_joints_teleoperation)
 
@@ -135,6 +132,9 @@ class MyPlugin(Plugin):
         self._widget.ImportTrajectoryButton.setIcon(QIcon.fromTheme('document-open'))
         self._widget.ImportTrajectoryButton.clicked[bool].connect(self._read_csv)
 
+        self._widget.PreviewButton.setIcon(QIcon.fromTheme('software-update-available'))
+        self._widget.PreviewButton.clicked[bool].connect(self._Preview_pose_sliders)
+
         self.goal = ArmJointState()
 
         self.arr_sl = [self._widget.SlJoint1,self._widget.SlJoint2,self._widget.SlJoint3,self._widget.SlJoint4,self._widget.SlJoint5,self._widget.SlJoint6]
@@ -149,9 +149,27 @@ class MyPlugin(Plugin):
         self.count_save_pose = 0
         self.joint_visualizer = []
 
-        #lista_arq = os.system(ls("/home/araque/trajectories_centauri6dof"))
-        #print(lista_arq)
-        #self._widget.ShowText.setText("Ava: "+lista_arq )
+        lista_arq = ''
+        for i in os.listdir("/home/araque/trajectories_centauri6dof"): lista_arq+=(i+'\n')
+        print(lista_arq)
+
+        #for i in lista_arq:
+        self._widget.ShowText.setText("Saved paths: \n" + lista_arq )
+
+        gripper = {'open': 0, 'banana': 70, 'box': 50}
+        upright = [0, 0, 0, 0, 0, 0, 0]
+
+        #predefined movements for pick and place of an box 
+        box_pick = [0, 2700, 18000, 0, 1500, 0, gripper['box']]
+        box_move = [0, 1200, 14000, 0, 0, 0, gripper['box']]
+        box_place = [8000, 3300, 16000, 0, 1100, 0, gripper['open']]
+
+        banana_pick = [8000, 3735, 13600, 0, 1040, 0, gripper['banana']]
+        banana_move = [8000, 1412, 6600, 0, 1040, 0, 80, gripper['banana']]
+        banana_place = [3555, 2733, 13399, 0, 1960, 0, 0, gripper['open']]
+
+        self.object_trajectories = {"box": [upright, box_pick, box_move, box_place, upright],
+                               "banana": [upright, banana_pick, banana_move, banana_place, upright]}
 
         for i in xrange(0,6):
             self.arr_sl[i].setEnabled(True)
@@ -173,26 +191,11 @@ class MyPlugin(Plugin):
 
     def fcn_path_1(self):
         self._widget.ShowText.setText("Path one")
-        
-        gripper = {'open': 0, 'banana': 70, 'box': 50}
-        upright = [0, 0, 0, 0, 0, 0, 0]
-
-        #predefined movements for pick and place of an box 
-        box_pick = [0, 2400, 18000, 0, 1500, 0, gripper['box']]
-        box_move = [0, 1200, 14000, 0, 0, 0, gripper['box']]
-        box_place = [8000, 3300, 16000, 0, 1100, 0, gripper['open']]
-
-        banana_pick = [0, -2243, -24410, 14, -400, 0, gripper['banana']]
-        banana_move = [0, -1043, -17410, 14, -3300, 0, gripper['banana']]
-        banana_place = [4600, -2400, -20410, -91, -400, 0, gripper['open']]
-
-        object_trajectories = {"box": [upright, box_pick, box_move, box_place, upright],
-                               "banana": [upright, banana_pick, banana_move, banana_place, upright]}
 
         pub = rospy.Publisher('joint_steps', ArmJointState, queue_size=20)
         rate = rospy.Rate(20) # 20hz
         pbar = ProgressBar()
-        for i in pbar(object_trajectories["box"]):
+        for i in pbar(self.object_trajectories["box"]):
             goal = ArmJointState()
             goal.position1 = i[0]
             goal.position2 = i[1]
@@ -206,25 +209,46 @@ class MyPlugin(Plugin):
         
     def fcn_path_2(self):
         self._widget.ShowText.setText("Path two")
-        os.system('espeak "(Path two)"')
 
-    def fcn_update_joints(self):
-        self._widget.ShowText.setText(
-            "Joint Angle1: " + str(round(self.pos.position[0]*(180/math.pi)))+
-            "\nJoint Angle2: " + str(round(self.pos.position[1]*(180/math.pi)))+
-            "\nJoint Angle3: " + str(round(self.pos.position[2]*(180/math.pi)))+
-            "\nJoint Angle4: " + str(round(self.pos.position[3]*(180/math.pi)))+
-            "\nJoint Angle5: " + str(round(self.pos.position[4]*(180/math.pi)))+
-            "\nJoint Angle6: " + str(round(self.pos.position[5]*(180/math.pi)))
-            )
+        pub = rospy.Publisher('joint_steps', ArmJointState, queue_size=20)
+        rate = rospy.Rate(20) # 20hz
+        pbar = ProgressBar()
+        for i in pbar(self.object_trajectories["banana"]):
+            goal = ArmJointState()
+            goal.position1 = i[0]
+            goal.position2 = i[1]
+            goal.position3 = i[2]
+            goal.position4 = i[3]
+            goal.position5 = i[4]
+            goal.position6 = i[5]
+            goal.position7 = i[6]
+            pub.publish(goal)
+            rospy.sleep(4)
 
     def joint_states_callback(self, joint_state):
-        self.pos = joint_state
-
+        pub = rospy.Publisher('trajectory', ArmJointState, queue_size=20)
+        rate = rospy.Rate(20) # 20hz
+        goal = ArmJointState()
+        goal.position1 = np.int16(joint_state.position[0]*(180/np.pi))
+        goal.position2 = np.int16(joint_state.position[1]*(180/np.pi))
+        goal.position3 = np.int16(joint_state.position[2]*(180/np.pi))
+        goal.position4 = np.int16(joint_state.position[3]*(180/np.pi))
+        goal.position5 = np.int16(joint_state.position[4]*(180/np.pi))
+        goal.position6 = np.int16(joint_state.position[5]*(180/np.pi))
+        goal.position7 = self.goal.position7
+        pub.publish(goal)
+        
     def joints_changes(self):
 
+        #group = self.group 
+        #joint_goal = group.get_current_joint_values()
+
         for i in xrange(0,6):
-            self.arr_ShowSl[i].setText(str(self.arr_sl[i].value()))
+            self.arr_ShowSl[i].setText(str(self.arr_sl[i].value()))     
+            #joint_goal[i] = (self.arr_sl[i].value()*np.pi)/180
+
+        #group.go(joint_goal, wait=True)
+        #group.stop()
 
     def _Send_joints_teleoperation(self):
         self._widget.ShowText.setText("Moving Joints with Sliders")
@@ -251,9 +275,25 @@ class MyPlugin(Plugin):
 
         current_joints = self.group.get_current_joint_values()
         
-    def _Center_joints_teleoperation(self): 
+    def _Center_joints_teleoperation(self):
+        group = self.group 
+        joint_goal = group.get_current_joint_values()
+
         for i in xrange(0,6):      
             self.arr_sl[i].setValue(0)
+            joint_goal[i] = (self.arr_sl[i].value()*np.pi)/180
+
+        self.goal.position1 = np.int16(((self.arr_sl[0].value()*np.pi)/180)*(32000/(2*np.pi)))
+        self.goal.position2 = np.int16(((self.arr_sl[1].value()*np.pi)/180)*(16400/(2*np.pi)))
+        self.goal.position3 = np.int16(((self.arr_sl[2].value()*np.pi)/180)*(72000/(2*np.pi)))
+        self.goal.position4 = np.int16(((self.arr_sl[3].value()*np.pi)/180)*(3200/(2*np.pi)))
+        self.goal.position5 = np.int16(((self.arr_sl[4].value()*np.pi)/180)*(14400/(2*np.pi)))
+        self.goal.position6 = np.int16(((self.arr_sl[5].value()*np.pi)/180)*(3000/(2*np.pi)))
+
+        self.pub2.publish(self.goal)
+
+        group.go(joint_goal, wait=True)
+        group.stop()
 
     def _Randomize_joints_teleoperation(self):
         result = []
@@ -269,9 +309,11 @@ class MyPlugin(Plugin):
         if self.grip == 1:
             self.goal.position7 = 80
             self.pub2.publish(self.goal)
+            self._widget.ShowText.setText("Gripper ON")
         else:
             self.goal.position7 = 0
             self.pub2.publish(self.goal)
+            self._widget.ShowText.setText("Gripper OFF")
             self.grip = 0
         
 
@@ -372,6 +414,17 @@ class MyPlugin(Plugin):
         os.system('espeak "(Successfully saved file)"')
         print(self.trajectory)
 
+    def _Preview_pose_sliders(self):
+
+        group = self.group 
+        joint_goal = group.get_current_joint_values()
+
+        for i in xrange(0,6):   
+            joint_goal[i] = (self.arr_sl[i].value()*np.pi)/180
+
+        group.go(joint_goal, wait=True)
+        group.stop()
+        
     def shutdown_plugin(self):
         # TODO unregister all publishers here
         pass

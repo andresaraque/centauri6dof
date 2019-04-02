@@ -2,7 +2,7 @@
 <package format="2">
   <name>rqt_mypkg</name>
   <version>0.0.0</version>
-  <description>The rqt_mypkg package</description>
+  <description>rqt_mypkg provides a GUI plugin to manipulate the Centauri robot easily</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -20,6 +20,8 @@
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
   <!-- <url type="website">http://wiki.ros.org/rqt_mypkg</url> -->
+  <url type="repository">https://github.com/andresaraque/centauri6dof</url>
+  
 
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->
