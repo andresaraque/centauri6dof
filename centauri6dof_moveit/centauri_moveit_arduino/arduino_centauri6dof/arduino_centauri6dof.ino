@@ -89,7 +89,7 @@ void gripper_cb( const std_msgs::UInt16& cmd_msg){
     }
   }
 }
-
+/* //Current
 float get_current(int n){
   float VoltSens;
   float current = 0;
@@ -100,7 +100,7 @@ float get_current(int n){
   current = current/n;
   return(current);
 }
-
+*/
 /*------------------definición de los objetos subscriptores------------------*/
 //la función arm_cb se ejecuta cuando hay un mensaje en el topic joint_steps
 ros::Subscriber<centauri6dof_moveit::ArmJointState> arm_sub("joint_steps",arm_cb);
@@ -108,7 +108,9 @@ ros::Subscriber<centauri6dof_moveit::ArmJointState> arm_sub("joint_steps",arm_cb
 //la función arm_cb se ejecuta cuando hay un mensaje en el topic gripper_angle
 ros::Subscriber<std_msgs::UInt16> gripper_sub("gripper_angle", gripper_cb); 
 
+/* //Current
 ros::Publisher p("current", &test);
+*/
 
 void setup() {
   //Serial.begin(57600);
@@ -120,15 +122,17 @@ void setup() {
   //Inicializar subscriptores
   nh.subscribe(arm_sub); 
   nh.subscribe(gripper_sub);
+  /* //Current
   nh.advertise(p);
+  */
 
   //Asignación de valor de maxima velocidad para cada motor
-  joint1.setMaxSpeed(3000);
-  joint2_m1.setMaxSpeed(1500);
-  joint2_m2.setMaxSpeed(1500);
-  joint3.setMaxSpeed(4000);
-  joint4.setMaxSpeed(1000);
-  joint5.setMaxSpeed(2000);
+  joint1.setMaxSpeed(1500);
+  joint2_m1.setMaxSpeed(400);
+  joint2_m2.setMaxSpeed(400);
+  joint3.setMaxSpeed(2000);
+  joint4.setMaxSpeed(200);
+  joint5.setMaxSpeed(1000);
   joint6.setMaxSpeed(500);
 
   //Agregar motores a la libreria MultiStepper
@@ -146,17 +150,18 @@ void setup() {
 }
 
 void loop() {
+  /* //Current
   float I = get_current(200); 
   test.data = I;
   p.publish( &test );
-  
+  */
   if (joint_status == 1){ // Si arm_cb esta siendo llamado asigna el estado de joint_state a 1.
     
     long positions[7];
 
     positions[0] = joint_step[0];     //8000  = 90°
-    positions[1] = joint_step[1];     //4100  = 90°
-    positions[2] = -joint_step[1];    //-4100 = 90°
+    positions[1] = -joint_step[1];    //-4100  = 90°
+    positions[2] = joint_step[1];     //4100 = 90°
     positions[3] = joint_step[2];     //18000 = 90°
     positions[4] = joint_step[3];     //800   = 90°
     positions[5] = -joint_step[4];    //3600  = 90°

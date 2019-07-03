@@ -95,7 +95,19 @@ class MyPlugin(Plugin):
 
         rospy.Subscriber("/move_group/fake_controller_joint_states", JointState, self.joint_states_callback)
 
-        img = QPixmap('/home/araque/catkin_ws/src/rqt_mypkg/resource/logo_uao.png')
+        self.username = os.path.expanduser("~")
+
+
+        target = "logo_uao.png"
+        initial_dir = self.username+'/catkin_ws/src'
+
+        path_file = ''
+        for root, _, files in os.walk(initial_dir):
+            if target in files:
+               path_file = os.path.join(root, target)
+               break
+
+        img = QPixmap(path_file)
 
         self._widget.LabelImageUao.setPixmap(img)
 
@@ -150,8 +162,12 @@ class MyPlugin(Plugin):
         self.joint_visualizer = []
 
         lista_arq = ''
-        for i in os.listdir("/home/araque/trajectories_centauri6dof"): lista_arq+=(i+'\n')
-        print(lista_arq)
+    
+        if os.path.exists(self.username+"/trajectories_centauri6dof"):
+            for i in os.listdir(self.username+"/trajectories_centauri6dof"): lista_arq+=(i+'\n')
+            print(lista_arq)
+        else:
+            os.makedirs(self.username+"/trajectories_centauri6dof")
 
         #for i in lista_arq:
         self._widget.ShowText.setText("Saved paths: \n" + lista_arq )
@@ -180,6 +196,11 @@ class MyPlugin(Plugin):
             self.arr_ShowSl[i].setEnabled(True)
             self.arr_ShowSl[i].setText(str(self.arr_sl[i].value()))
 
+        self._widget.SlJoint2.setMaximum(80)
+        self._widget.SlJoint2.setMinimum(-80)
+        self._widget.SlJoint4.setMaximum(75)
+        self._widget.SlJoint4.setMinimum(-75)
+
         if context.serial_number() > 1:
             self._widget.setWindowTitle(self._widget.windowTitle() + (' (%d)' % context.serial_number()))
         # Add widget to the user interface
@@ -191,21 +212,41 @@ class MyPlugin(Plugin):
 
     def fcn_path_1(self):
         self._widget.ShowText.setText("Path one")
+        group = self.group
 
         pub = rospy.Publisher('joint_steps', ArmJointState, queue_size=20)
         rate = rospy.Rate(20) # 20hz
         pbar = ProgressBar()
+        joint_goal = group.get_current_joint_values()
+
         for i in pbar(self.object_trajectories["box"]):
             goal = ArmJointState()
             goal.position1 = i[0]
+            joint_goal[0]  = i[0]*((np.pi*2)/32000)
             goal.position2 = i[1]
+            joint_goal[1]  = i[1]*((np.pi*2)/16400)
             goal.position3 = i[2]
+            joint_goal[2]  = i[2]*((np.pi*2)/72000)
             goal.position4 = i[3]
+            joint_goal[3]  = i[3]*((np.pi*2)/3200)
             goal.position5 = i[4]
+            joint_goal[4]  = i[4]*((np.pi*2)/14400)
             goal.position6 = i[5]
+            joint_goal[5]  = i[5]*((np.pi*2)/3000)
             goal.position7 = i[6]
             pub.publish(goal)
+            group.go(joint_goal, wait=True)
             rospy.sleep(4)
+        group.stop()
+        current_joints = self.group.get_current_joint_values()
+        
+
+        for i in xrange(0,6):
+            joint_goal[i] = (self.arr_sl[i].value()*np.pi)/180
+
+        
+
+        
         
     def fcn_path_2(self):
         self._widget.ShowText.setText("Path two")
@@ -393,7 +434,7 @@ class MyPlugin(Plugin):
 
     def _write_csv(self):
         name = str(self._widget.NameFileTextEdit.toPlainText())
-        locationFile = open('./trajectories_centauri6dof/'+name+'.csv','w')
+        locationFile = open(self.username+'/trajectories_centauri6dof/'+name+'.csv','w')
         file = csv.writer(locationFile)
         file.writerows(self.trajectory)
         self._widget.ShowText.setText("Successfully saved file "+name+" (CSV)")
@@ -404,7 +445,7 @@ class MyPlugin(Plugin):
         self.count_save_pose = 1
         name = str(self._widget.NameFileTextEdit.toPlainText())
         self.trajectory = []
-        locationFile = open('./trajectories_centauri6dof/'+name+'.csv','r')
+        locationFile = open(self.username+'/trajectories_centauri6dof/'+name+'.csv','r')
         file = csv.reader(locationFile, delimiter=',')
         for num_array_pose in file:
             for num_pose in xrange(0,7):
