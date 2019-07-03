@@ -106,7 +106,7 @@ class MyPlugin(Plugin):
             if target in files:
                path_file = os.path.join(root, target)
                break
-
+        #To search for the username
         img = QPixmap(path_file)
 
         self._widget.LabelImageUao.setPixmap(img)
