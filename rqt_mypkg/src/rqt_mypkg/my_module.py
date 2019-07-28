@@ -293,9 +293,12 @@ class MyPlugin(Plugin):
 
     def _Send_joints_teleoperation(self):
         self._widget.ShowText.setText("Moving Joints with Sliders")
-        os.system('espeak "(Moving Joints with Sliders)"')
 
         group = self.group
+        joint_goal = group.get_current_joint_values()
+
+        for i in xrange(0,6):
+            joint_goal[i] = (self.arr_sl[i].value()*np.pi)/180
         
         self.goal.position1 = np.int16(((self.arr_sl[0].value()*np.pi)/180)*(32000/(2*np.pi)))
         self.goal.position2 = np.int16(((self.arr_sl[1].value()*np.pi)/180)*(16400/(2*np.pi)))
@@ -305,11 +308,6 @@ class MyPlugin(Plugin):
         self.goal.position6 = np.int16(((self.arr_sl[5].value()*np.pi)/180)*(3000/(2*np.pi)))
 
         self.pub2.publish(self.goal)
-
-        joint_goal = group.get_current_joint_values()
-
-        for i in xrange(0,6):
-            joint_goal[i] = (self.arr_sl[i].value()*np.pi)/180
 
         group.go(joint_goal, wait=True)
         group.stop()
@@ -438,7 +436,7 @@ class MyPlugin(Plugin):
         file = csv.writer(locationFile)
         file.writerows(self.trajectory)
         self._widget.ShowText.setText("Successfully saved file "+name+" (CSV)")
-        os.system('espeak "(Successfully saved file)"')
+        os.system('espeak "(Saved file)"')
 
     def _read_csv(self):
         self.activate = 1
@@ -452,7 +450,7 @@ class MyPlugin(Plugin):
                 np.asarray(num_array_pose[num_pose])
             self.trajectory.append(num_array_pose)
         self._widget.ShowText.setText("Successfully import file "+name+" (CSV)")
-        os.system('espeak "(Successfully saved file)"')
+        os.system('espeak "(Imported file)"')
         print(self.trajectory)
 
     def _Preview_pose_sliders(self):
