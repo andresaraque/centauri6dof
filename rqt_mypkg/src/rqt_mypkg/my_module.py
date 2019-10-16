@@ -11,6 +11,8 @@ import moveit_commander.move_group as MICMoveGroupCommander
 import moveit_msgs.msg
 import geometry_msgs.msg
 
+import time
+
 from sensor_msgs.msg import JointState
 from std_msgs.msg import String
 from qt_gui.plugin import Plugin
@@ -153,7 +155,7 @@ class MyPlugin(Plugin):
         self.arr_ShowSl = [self._widget.ShowJoint1,self._widget.ShowJoint2,self._widget.ShowJoint3,self._widget.ShowJoint4,self._widget.ShowJoint5,self._widget.ShowJoint6]
         
 
-        self.pub2 = rospy.Publisher('joint_steps', ArmJointState, queue_size=20)
+        self.pub2 = rospy.Publisher('joint_steps', ArmJointState, queue_size=50)
         rate = rospy.Rate(20) # 20hz
 
         self.savePose = []
@@ -200,6 +202,10 @@ class MyPlugin(Plugin):
         self._widget.SlJoint2.setMinimum(-80)
         self._widget.SlJoint4.setMaximum(75)
         self._widget.SlJoint4.setMinimum(-75)
+
+        self._widget.spinBoxRepeat.setMaximum(20)
+        self._widget.spinBoxRepeat.setMinimum(-20)
+        self._widget.spinBoxRepeat.setValue(0)
 
         if context.serial_number() > 1:
             self._widget.setWindowTitle(self._widget.windowTitle() + (' (%d)' % context.serial_number()))
@@ -410,25 +416,62 @@ class MyPlugin(Plugin):
         group = self.group
         joint_goal = group.get_current_joint_values()
 
-        for num_array_pose in self.trajectory:
-            goal = ArmJointState()
-            goal.position1 = np.int16(num_array_pose[0])
-            joint_goal[0] = (float(num_array_pose[0])*(2*np.pi))/32000
-            goal.position2 = np.int16(num_array_pose[1])
-            joint_goal[1] = (float(num_array_pose[1])*(2*np.pi))/16400
-            goal.position3 = np.int16(num_array_pose[2])
-            joint_goal[2] = (float(num_array_pose[2])*(2*np.pi))/72000
-            goal.position4 = np.int16(num_array_pose[3])
-            joint_goal[3] = (float(num_array_pose[3])*(2*np.pi))/3200
-            goal.position5 = np.int16(num_array_pose[4])
-            joint_goal[4] = (float(num_array_pose[4])*(2*np.pi))/14400
-            goal.position6 = np.int16(num_array_pose[5])
-            joint_goal[5] = (float(num_array_pose[5])*(2*np.pi))/3000
-            goal.position7 = np.int16(num_array_pose[6])
-            self.pub2.publish(goal)
-            group.go(joint_goal, wait=True)
+        timeRepeat = self._widget.spinBoxRepeat.value()
+
+        if timeRepeat != 0 :
+            for i in range(timeRepeat):
+
+                for num_array_pose in self.trajectory:
+                    goal = ArmJointState()
+                    goal.position1 = np.int16(num_array_pose[0])
+                    joint_goal[0] = (float(num_array_pose[0])*(2*np.pi))/32000
+                    goal.position2 = np.int16(num_array_pose[1])
+                    joint_goal[1] = (float(num_array_pose[1])*(2*np.pi))/16400
+                    goal.position3 = np.int16(num_array_pose[2])
+                    joint_goal[2] = (float(num_array_pose[2])*(2*np.pi))/72000
+                    goal.position4 = np.int16(num_array_pose[3])
+                    joint_goal[3] = (float(num_array_pose[3])*(2*np.pi))/3200
+                    goal.position5 = np.int16(num_array_pose[4])
+                    joint_goal[4] = (float(num_array_pose[4])*(2*np.pi))/14400
+                    goal.position6 = np.int16(num_array_pose[5])
+                    joint_goal[5] = (float(num_array_pose[5])*(2*np.pi))/3000
+                    goal.position7 = np.int16(num_array_pose[6])
+
+
+                    self.pub2.publish(goal)
+                    group.go(joint_goal, wait=True)
+
+                    #time.sleep(2)
+                    rospy.sleep(5)#Antes 5
+                print(i)
             group.stop()
-            rospy.sleep(5)
+            self._widget.spinBoxRepeat.setValue(0)  
+
+                
+        else : 
+            for num_array_pose in self.trajectory:
+                goal = ArmJointState()
+                goal.position1 = np.int16(num_array_pose[0])
+                joint_goal[0] = (float(num_array_pose[0])*(2*np.pi))/32000
+                goal.position2 = np.int16(num_array_pose[1])
+                joint_goal[1] = (float(num_array_pose[1])*(2*np.pi))/16400
+                goal.position3 = np.int16(num_array_pose[2])
+                joint_goal[2] = (float(num_array_pose[2])*(2*np.pi))/72000
+                goal.position4 = np.int16(num_array_pose[3])
+                joint_goal[3] = (float(num_array_pose[3])*(2*np.pi))/3200
+                goal.position5 = np.int16(num_array_pose[4])
+                joint_goal[4] = (float(num_array_pose[4])*(2*np.pi))/14400
+                goal.position6 = np.int16(num_array_pose[5])
+                joint_goal[5] = (float(num_array_pose[5])*(2*np.pi))/3000
+                goal.position7 = np.int16(num_array_pose[6])
+
+
+                self.pub2.publish(goal)
+                group.go(joint_goal, wait=True)
+                group.stop()
+                #time.sleep(2)
+                rospy.sleep(5)#Antes 5
+
 
     def _write_csv(self):
         name = str(self._widget.NameFileTextEdit.toPlainText())
