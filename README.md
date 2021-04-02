@@ -66,3 +66,7 @@ What things you need to install the software and how to install them
 - **Import path**: Import the saved paths by entering the name of the csv file.
 ## Schematic Diagram
 ![diagram.png](/diagram.png)
+## Authors
+- [Andres Araque](https://github.com/andresaraque)
+- [Francisco Pedroza](https://github.com/franciscopedroza030595)
+- [Victor Rommero](https://github.com/vromerocano)
